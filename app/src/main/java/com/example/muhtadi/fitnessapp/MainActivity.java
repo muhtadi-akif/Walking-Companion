@@ -1,10 +1,12 @@
 package com.example.muhtadi.fitnessapp;
 
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Sensor accel;
     private static final String TEXT_NUM_STEPS = "Number of Steps: ";
     private int numSteps;
-
+    FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +40,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         Button BtnStart = (Button) findViewById(R.id.btn_start);
         Button BtnStop = (Button) findViewById(R.id.btn_stop);
+        fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,HeartRateMonitor.class));
+            }
+        });
 
 
         BtnStart.setOnClickListener(new View.OnClickListener() {
