@@ -118,12 +118,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if (preference.getGender() == GENDER_MALE) {
                     kcal = String.format("%.2f", calculateEnergyExpenditure(preference.getHeight(), preference.getAge(), preference.getWeight(),
                             preference.getGender(), elapsedSeconds, numSteps, MALE_STRIDE_LENGTH_METER));
-                    globalAlert("You've Walked " + numSteps + " steps in " + elapsedSeconds + " seconds and you've" +
+                    globalAlert("You've Walked " + numSteps + " steps in " + getDurationString(elapsedSeconds) + " and you've" +
                             " burnt " + kcal + " KCal");
                 } else if (preference.getGender() == GENDER_FEMALE) {
                     kcal = String.format("%.2f", calculateEnergyExpenditure(preference.getHeight(), preference.getAge(), preference.getWeight(),
                             preference.getGender(), elapsedSeconds, numSteps, FEMALE_STRIDE_LENGTH_METER));
-                    globalAlert("You've Walked " + numSteps + " steps in " + elapsedSeconds + " seconds and you've" +
+                    globalAlert("You've Walked " + numSteps + " steps in " + getDurationString(elapsedSeconds) + " and you've" +
                             " burnt " + kcal + " KCal");
                 }
                 BtnStart.setVisibility(View.VISIBLE);
@@ -142,6 +142,33 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 finish();
             }
         });
+
+    }
+
+    private String getDurationString(int seconds) {
+
+        int hours = seconds / 3600;
+        int minutes = (seconds % 3600) / 60;
+        seconds = seconds % 60;
+        String txt_hours = " hour ";
+        String txt_mins = " minute ";
+        String txt_seconds = " second ";
+        if (hours > 1) {
+            txt_hours = " hours ";
+        }
+        if (minutes > 1) {
+            txt_mins = " minutes ";
+        }
+        if (seconds > 1) {
+            txt_seconds = " seconds ";
+        }
+        if (hours > 0) {
+            return hours + txt_hours + minutes + txt_mins + seconds + txt_seconds;
+        } else if (minutes > 0) {
+            return minutes + txt_mins + seconds + txt_seconds;
+        } else {
+            return seconds + txt_seconds;
+        }
 
     }
 
