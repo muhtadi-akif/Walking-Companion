@@ -5,15 +5,18 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.example.muhtadi.fitnessapp.R;
 import com.example.muhtadi.fitnessapp.StepDetector;
@@ -37,11 +40,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Chronometer chronometer;
     private boolean isStart;
     Preference preference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().setTitle("Walking Companion");
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setTitle("Walking Companion");
+        }
         preference = new Preference(this);
         // Get an instance of the SensorManager
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -96,14 +103,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 int elapsedMillis = (int) (SystemClock.elapsedRealtime() - chronometer.getBase());
                 int elapsedSeconds = elapsedMillis / 1000;
 
-                if(preference.getGender() == GENDER_MALE){
-                    Toast.makeText(MainActivity.this, "You've Walked "+numSteps+" in "+elapsedSeconds+" and you've" +
-                            "burnt "+ calculateEnergyExpenditure(preference.getHeight(),preference.getAge(),preference.getWeight(),
-                            preference.getGender(),elapsedSeconds,numSteps,MALE_STRIDE_LENGTH_METER),Toast.LENGTH_LONG);
-                }else if(preference.getGender() == GENDER_FEMALE){
-                    Toast.makeText(MainActivity.this, "You've Walked "+numSteps+" in "+elapsedSeconds+" and you've" +
-                            "burnt "+ calculateEnergyExpenditure(preference.getHeight(),preference.getAge(),preference.getWeight(),
-                            preference.getGender(),elapsedSeconds,numSteps,FEMALE_STRIDE_LENGTH_METER),Toast.LENGTH_LONG);
+                if (preference.getGender() == GENDER_MALE) {
+                    Toast.makeText(MainActivity.this, "You've Walked " + numSteps + " in " + elapsedSeconds + " and you've" +
+                            "burnt " + calculateEnergyExpenditure(preference.getHeight(), preference.getAge(), preference.getWeight(),
+                            preference.getGender(), elapsedSeconds, numSteps, MALE_STRIDE_LENGTH_METER), Toast.LENGTH_LONG);
+                } else if (preference.getGender() == GENDER_FEMALE) {
+                    Toast.makeText(MainActivity.this, "You've Walked " + numSteps + " in " + elapsedSeconds + " and you've" +
+                            "burnt " + calculateEnergyExpenditure(preference.getHeight(), preference.getAge(), preference.getWeight(),
+                            preference.getGender(), elapsedSeconds, numSteps, FEMALE_STRIDE_LENGTH_METER), Toast.LENGTH_LONG);
                 }
 
 
