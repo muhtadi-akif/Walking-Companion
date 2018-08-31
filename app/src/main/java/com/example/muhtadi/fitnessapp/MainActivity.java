@@ -1,5 +1,6 @@
 package com.example.muhtadi.fitnessapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -9,8 +10,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -29,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private StepDetector simpleStepDetector;
     private SensorManager sensorManager;
     private Sensor accel;
-
+    public static String intentEdit = "EDT_INTENT";
     private static final String TEXT_NUM_STEPS = "Number of Steps: ";
     private int numSteps;
     FloatingActionButton fab;
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         simpleStepDetector.registerListener(this);
 
         TvSteps = (TextView) findViewById(R.id.tv_steps);
+        TvSteps.setText(TEXT_NUM_STEPS + 0);
         chronometer = findViewById(R.id.chronometer);
         chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
@@ -64,8 +68,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 chronometer = chronometerChanged;
             }
         });
-        Button BtnStart = (Button) findViewById(R.id.btn_start);
-        Button BtnStop = (Button) findViewById(R.id.btn_stop);
+        Button btnBPMhisotry = (Button) findViewById(R.id.btn_bpm_history);
+        final Button BtnStart = (Button) findViewById(R.id.btn_start);
+        final Button BtnStop = (Button) findViewById(R.id.btn_stop);
+        final Button btn_edit_info = (Button) findViewById(R.id.btn_edit_info);
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +80,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
-
+        btnBPMhisotry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, Main2Activity.class));
+            }
+        });
         BtnStart.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -86,7 +97,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 //steps
                 numSteps = 0;
                 sensorManager.registerListener(MainActivity.this, accel, SensorManager.SENSOR_DELAY_FASTEST);
-
+                BtnStart.setVisibility(View.GONE);
+                BtnStop.setVisibility(View.VISIBLE);
             }
         });
 
@@ -102,22 +114,49 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 sensorManager.unregisterListener(MainActivity.this);
                 int elapsedMillis = (int) (SystemClock.elapsedRealtime() - chronometer.getBase());
                 int elapsedSeconds = elapsedMillis / 1000;
-
                 if (preference.getGender() == GENDER_MALE) {
-                    Toast.makeText(MainActivity.this, "You've Walked " + numSteps + " in " + elapsedSeconds + " and you've" +
-                            "burnt " + calculateEnergyExpenditure(preference.getHeight(), preference.getAge(), preference.getWeight(),
-                            preference.getGender(), elapsedSeconds, numSteps, MALE_STRIDE_LENGTH_METER), Toast.LENGTH_LONG);
+                    globalAlert("You've Walked " + numSteps + " steps in " + elapsedSeconds + " seconds and you've" +
+                            " burnt " + calculateEnergyExpenditure(preference.getHeight(), preference.getAge(), preference.getWeight(),
+                            preference.getGender(), elapsedSeconds, numSteps, MALE_STRIDE_LENGTH_METER)+" KCal");
                 } else if (preference.getGender() == GENDER_FEMALE) {
-                    Toast.makeText(MainActivity.this, "You've Walked " + numSteps + " in " + elapsedSeconds + " and you've" +
-                            "burnt " + calculateEnergyExpenditure(preference.getHeight(), preference.getAge(), preference.getWeight(),
-                            preference.getGender(), elapsedSeconds, numSteps, FEMALE_STRIDE_LENGTH_METER), Toast.LENGTH_LONG);
+                    globalAlert("You've Walked " + numSteps + " steps in " + elapsedSeconds + " seconds and you've" +
+                            " burnt " + calculateEnergyExpenditure(preference.getHeight(), preference.getAge(), preference.getWeight(),
+                            preference.getGender(), elapsedSeconds, numSteps, FEMALE_STRIDE_LENGTH_METER)+" KCal");
                 }
-
+                BtnStart.setVisibility(View.VISIBLE);
+                BtnStop.setVisibility(View.GONE);
+                TvSteps.setText(TEXT_NUM_STEPS + 0);
+                chronometer.setBase(SystemClock.elapsedRealtime());
 
             }
         });
+        btn_edit_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this,UserInputActivity.class);
+                i.putExtra(intentEdit,true);
+                startActivity(i);
+                finish();
+            }
+        });
 
+    }
 
+    public AlertDialog globalAlert(String text) {
+        //Toast.makeText(context,text,Toast.LENGTH_LONG).show();
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Walking Companion");
+        alertDialog.setIcon(R.mipmap.ic_launcher);
+        alertDialog.setMessage(text);
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+
+        return alertDialog;
     }
 
 
