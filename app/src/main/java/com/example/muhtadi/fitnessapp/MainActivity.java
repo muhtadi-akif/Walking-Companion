@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Chronometer chronometer;
     private boolean isStart;
     Preference preference;
+    String kcal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,13 +116,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 int elapsedMillis = (int) (SystemClock.elapsedRealtime() - chronometer.getBase());
                 int elapsedSeconds = elapsedMillis / 1000;
                 if (preference.getGender() == GENDER_MALE) {
+                    kcal = String.format("%.2f", calculateEnergyExpenditure(preference.getHeight(), preference.getAge(), preference.getWeight(),
+                            preference.getGender(), elapsedSeconds, numSteps, MALE_STRIDE_LENGTH_METER));
                     globalAlert("You've Walked " + numSteps + " steps in " + elapsedSeconds + " seconds and you've" +
-                            " burnt " + calculateEnergyExpenditure(preference.getHeight(), preference.getAge(), preference.getWeight(),
-                            preference.getGender(), elapsedSeconds, numSteps, MALE_STRIDE_LENGTH_METER)+" KCal");
+                            " burnt " + kcal + " KCal");
                 } else if (preference.getGender() == GENDER_FEMALE) {
+                    kcal = String.format("%.2f", calculateEnergyExpenditure(preference.getHeight(), preference.getAge(), preference.getWeight(),
+                            preference.getGender(), elapsedSeconds, numSteps, FEMALE_STRIDE_LENGTH_METER));
                     globalAlert("You've Walked " + numSteps + " steps in " + elapsedSeconds + " seconds and you've" +
-                            " burnt " + calculateEnergyExpenditure(preference.getHeight(), preference.getAge(), preference.getWeight(),
-                            preference.getGender(), elapsedSeconds, numSteps, FEMALE_STRIDE_LENGTH_METER)+" KCal");
+                            " burnt " + kcal + " KCal");
                 }
                 BtnStart.setVisibility(View.VISIBLE);
                 BtnStop.setVisibility(View.GONE);
@@ -133,8 +136,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         btn_edit_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this,UserInputActivity.class);
-                i.putExtra(intentEdit,true);
+                Intent i = new Intent(MainActivity.this, UserInputActivity.class);
+                i.putExtra(intentEdit, true);
                 startActivity(i);
                 finish();
             }
